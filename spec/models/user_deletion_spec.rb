@@ -1,23 +1,23 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe User, "#destroy" do
-  let(:user) { Factory.create(:user) }
-  let(:user2) { Factory.create(:user) }
+  let(:user) { FactoryGirl.create(:user) }
+  let(:user2) { FactoryGirl.create(:user) }
   let(:substitute_user) { DeletedUser.first }
   let(:project) do
-    project = Factory.create(:valid_project)
-#    Factory.create(:member, :project => project,
+    project = FactoryGirl.create(:valid_project)
+#    FactoryGirl.create(:member, :project => project,
 #                            :user => user,
-#                            :roles => [Factory.build(:role)])
-#    Factory.create(:member, :project => project,
+#                            :roles => [FactoryGirl.build(:role)])
+#    FactoryGirl.create(:member, :project => project,
 #                            :user => user2,
-#                            :roles => [Factory.build(:role)])
+#                            :roles => [FactoryGirl.build(:role)])
     project
   end
 
-  let(:meeting) { Factory.create(:meeting, :project => project,
+  let(:meeting) { FactoryGirl.create(:meeting, :project => project,
                                            :author => user2) }
-  let(:participant) { Factory.create(:meeting_participant, :user => user,
+  let(:participant) { FactoryGirl.create(:meeting_participant, :user => user,
                                                            :meeting => meeting,
                                                            :invited => true,
                                                            :attended => true) }
@@ -55,13 +55,13 @@ describe User, "#destroy" do
     it { associated_instance.journals.first.user.should == user2 }
     it "should update first journal changes" do
       associations.each do |association|
-        associated_instance.journals.first.changes[association.to_s + "_id"].last.should == user2.id
+        associated_instance.journals.first.changed_data[association.to_s + "_id"].last.should == user2.id
       end
     end
     it { associated_instance.journals.last.user.should == substitute_user }
     it "should update second journal changes" do
       associations.each do |association|
-        associated_instance.journals.last.changes[association.to_s + "_id"].last.should == substitute_user.id
+        associated_instance.journals.last.changed_data[association.to_s + "_id"].last.should == substitute_user.id
       end
     end
   end
@@ -94,21 +94,21 @@ describe User, "#destroy" do
     it { associated_instance.journals.first.user.should == substitute_user }
     it "should update the first journal" do
       associations.each do |association|
-        associated_instance.journals.first.changes[association.to_s + "_id"].last.should == substitute_user.id
+        associated_instance.journals.first.changed_data[association.to_s + "_id"].last.should == substitute_user.id
       end
     end
     it { associated_instance.journals.last.user.should == user2 }
     it "should update the last journal" do
       associations.each do |association|
-        associated_instance.journals.last.changes[association.to_s + "_id"].first.should == substitute_user.id
-        associated_instance.journals.last.changes[association.to_s + "_id"].last.should == user2.id
+        associated_instance.journals.last.changed_data[association.to_s + "_id"].first.should == substitute_user.id
+        associated_instance.journals.last.changed_data[association.to_s + "_id"].last.should == user2.id
       end
     end
   end
 
   describe "WHEN the user created a meeting" do
     let(:associations) { [:author] }
-    let(:associated_instance) { Factory.build(:meeting, :project => project) }
+    let(:associated_instance) { FactoryGirl.build(:meeting, :project => project) }
     let(:associated_class) { Meeting }
 
     it_should_behave_like "created journalized associated object"
@@ -116,7 +116,7 @@ describe User, "#destroy" do
 
   describe "WHEN the user updated a meeting" do
     let(:associations) { [:author] }
-    let(:associated_instance) { Factory.build(:meeting, :project => project) }
+    let(:associated_instance) { FactoryGirl.build(:meeting, :project => project) }
     let(:associated_class) { Meeting }
 
     it_should_behave_like "updated journalized associated object"
@@ -124,7 +124,7 @@ describe User, "#destroy" do
 
   describe "WHEN the user created a meeting agenda" do
     let(:associations) { [:author] }
-    let(:associated_instance) { Factory.build(:meeting_agenda, :meeting => meeting,
+    let(:associated_instance) { FactoryGirl.build(:meeting_agenda, :meeting => meeting,
                                                                :text => "lorem")}
     let(:associated_class) { MeetingAgenda }
 
@@ -133,7 +133,7 @@ describe User, "#destroy" do
 
   describe "WHEN the user updated a meeting agenda" do
     let(:associations) { [:author] }
-    let(:associated_instance) { Factory.build(:meeting_agenda, :meeting => meeting,
+    let(:associated_instance) { FactoryGirl.build(:meeting_agenda, :meeting => meeting,
                                                                :text => "lorem")}
     let(:associated_class) { MeetingAgenda }
 
@@ -142,7 +142,7 @@ describe User, "#destroy" do
 
   describe "WHEN the user created a meeting minutes" do
     let(:associations) { [:author] }
-    let(:associated_instance) { Factory.build(:meeting_minutes, :meeting => meeting,
+    let(:associated_instance) { FactoryGirl.build(:meeting_minutes, :meeting => meeting,
                                                                 :text => "lorem")}
     let(:associated_class) { MeetingMinutes }
 
@@ -151,7 +151,7 @@ describe User, "#destroy" do
 
   describe "WHEN the user updated a meeting minutes" do
     let(:associations) { [:author] }
-    let(:associated_instance) { Factory.build(:meeting_minutes, :meeting => meeting,
+    let(:associated_instance) { FactoryGirl.build(:meeting_minutes, :meeting => meeting,
                                                                :text => "lorem")}
     let(:associated_class) { MeetingMinutes }
 

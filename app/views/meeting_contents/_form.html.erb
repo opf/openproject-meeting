@@ -1,4 +1,4 @@
-<% form_for :"#{content_type}", content, :url => {:controller => content_type.pluralize, :action => 'update', :meeting_id => content.meeting}, :html => {:id => "#{content_type}_form", :method => :put} do |f| %>
+<%= form_for content, :url => {:controller => content_type.pluralize, :action => 'update', :meeting_id => content.meeting}, :html => {:id => "#{content_type}_form", :method => :put} do |f| %>
 <%= error_messages_for content_type %>
 
 <p><%= f.text_area :text, :cols => 100, :rows => 25, :class => 'wiki-edit', :accesskey => accesskey(:edit) %></p>
@@ -19,5 +19,5 @@
 <div id="<%= content_type %>_preview" class="wiki"></div>
 
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'redmine_meeting', :plugin => 'redmine_meeting' %>
+  <%= stylesheet_link_tag 'openproject_meeting', :plugin => 'openproject_meeting' %>
 <% end %>
