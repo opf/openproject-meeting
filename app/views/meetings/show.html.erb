@@ -1,17 +1,17 @@
 <div class="contextual">
   <%= watcher_link @meeting, User.current %>
-  <%= link_to_if_authorized(l(:button_edit), {:action => 'edit'}, :class => 'icon icon-edit')%>
+  <%= link_to_if_authorized(l(:button_edit), {:controller => 'meetings', :action => 'edit', :id => @meeting}, :class => 'icon icon-edit')%>
   <%= link_to_if_authorized(l(:button_copy), {:controller => 'meetings', :action => 'copy', :id => @meeting}, :class => 'icon icon-copy')%>
-  <%= link_to_if_authorized(l(:button_delete), {:action => 'destroy'}, :method => :delete, :confirm => l(:text_are_you_sure), :class => 'icon icon-del')%>
+  <%= link_to_if_authorized(l(:button_delete), {:controller => 'meetings', :action => 'destroy', :id => @meeting}, :method => :delete, :confirm => l(:text_are_you_sure), :class => 'icon icon-del')%>
 </div>
 
-<h2><%= l(:label_meeting) %>: <%= link_to @meeting, @meeting %></h2>
+<h2><%= l(:label_meeting) %>: <%= link_to @meeting %></h2>
 
 <div class="meeting details box">
   <%= avatar(@meeting.author, :size => "64") %>
   <p class="author"><%= authoring @meeting.created_at, @meeting.author %></p>
   <div class="splitcontentleft">
-  <p><strong><%= l(:field_start_time) %></strong>: <%= format_date @meeting.start_date %> <%= format_time @meeting.start_time, false %>-<%= format_time @meeting.end_time, false %></p>
+  <p><strong><%= l(:field_start_time) %></strong>: <%= format_date @meeting.start_date %> <%= format_time @meeting.start_time, false %> - <%= format_time @meeting.end_time, false %></p>
   </div>
   <div class="splitcontentright">
   <p><strong><%= l(:field_location) %></strong>: <%=h @meeting.location %></p>
@@ -34,5 +34,5 @@
 <% end %>
 
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'redmine_meeting', :plugin => 'redmine_meeting' %>
+  <%= stylesheet_link_tag 'openproject_meeting', :plugin => 'openproject_meeting' %>
 <% end %>

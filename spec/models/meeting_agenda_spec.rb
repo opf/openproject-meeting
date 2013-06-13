@@ -1,9 +1,8 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe "MeetingAgenda" do
-  before(:all) do
-    #@m = Factory.build :meeting, :title => "dingens"
-    @a = Factory.build :meeting_agenda, :text => "Some content...\n\nMore content!\n\nExtraordinary content!!"
+  before(:each) do
+    @a = FactoryGirl.build :meeting_agenda, :text => "Some content...\n\nMore content!\n\nExtraordinary content!!"
   end
   
   # TODO: Test the right user and messages are set in the history
@@ -31,6 +30,7 @@ describe "MeetingAgenda" do
   # a meeting agenda is editable when it is not locked
   describe "#editable?" do
     it "is editable when not locked" do
+      @a.locked = false
       @a.editable?.should be_true
     end
     it "is not editable when locked" do

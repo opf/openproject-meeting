@@ -20,9 +20,10 @@ Feature: Copy meetings
           And there is a role "user"
           And the user "alice" is a "user" in the project "dingens"
           And there is 1 meeting in project "dingens" created by "alice" with:
-              | title    | Alices Meeting |
-              | location | CZI            |
-              | duration | 1.5            |
+              | title      | Alices Meeting      |
+              | location   | CZI                 |
+              | duration   | 1.5                 |
+              | start_time | 2013-03-27 18:55:00 |
 
   Scenario: Navigate to a meeting page with permission to create meetings
       Given the role "user" may have the following rights:
@@ -44,6 +45,9 @@ Feature: Copy meetings
        Then the "meeting[title]" field should contain "Alices Meeting"
         And the "meeting[location]" field should contain "CZI"
         And the "meeting[duration]" field should contain "1.5"
+        And the "meeting[start_date]" field should contain "2013-03-27"
+        And the "meeting[start_time(4i)]" field should contain "18"
+        And the "meeting[start_time(5i)]" field should contain "55"
        #And no participant should be selected as attendee
        #And only invited participants should be selected as invitees
 
@@ -80,8 +84,8 @@ Feature: Copy meetings
        When I am already logged in as "alice"
         And I go to the Meetings page for the project called "dingens"
         And I click on "Alices Meeting"
-        And I click on "Copy"
-        And I click on "Create"
-        And I click on "Agenda"
-        And I click on "History"
+        And I follow "Copy"
+        And I press "Create"
+        And I follow "Agenda"
+        And I follow "History" within ".meeting_agenda"
        Then I should see "Copied from Meeting #"

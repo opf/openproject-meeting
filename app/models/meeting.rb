@@ -1,6 +1,8 @@
 class Meeting < ActiveRecord::Base
   unloadable
 
+  self.table_name = 'meetings'
+
   belongs_to :project
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
   has_one :agenda, :dependent => :destroy, :class_name => 'MeetingAgenda'
@@ -8,7 +10,7 @@ class Meeting < ActiveRecord::Base
   has_many :contents, :class_name => 'MeetingContent', :readonly => true
   has_many :participants, :dependent => :destroy, :class_name => 'MeetingParticipant'
 
-  named_scope :from_tomorrow, :conditions => ['start_time >= ?', Date.tomorrow.beginning_of_day]
+  scope :from_tomorrow, :conditions => ['start_time >= ?', Date.tomorrow.beginning_of_day]
 
   attr_accessible :title, :location, :start_time, :duration
 
@@ -22,6 +24,7 @@ class Meeting < ActiveRecord::Base
                       :event_title => Proc.new {|o| "#{l :label_meeting}: #{o.title} (#{format_date o.start_time} #{format_time o.start_time, false}-#{format_time o.end_time, false})"},
                       :event_url => Proc.new {|o| {:controller => 'meetings', :action => 'show', :id => o.journaled}}
 
+  register_on_journal_formatter(:plaintext, 'title')
   register_on_journal_formatter(:fraction, 'duration')
   register_on_journal_formatter(:datetime, 'start_time')
   register_on_journal_formatter(:plaintext, 'location')
@@ -30,7 +33,9 @@ class Meeting < ActiveRecord::Base
 
   validates_presence_of :title, :start_time, :duration
 
-  after_create :add_author_as_watcher
+  before_save :add_new_participants_as_watcher
+
+  after_initialize :set_initial_values
 
   User.before_destroy do |user|
     Meeting.update_all ['author_id = ?', DeletedUser.first.id], ['author_id = ?', user.id]
@@ -80,23 +85,41 @@ class Meeting < ActiveRecord::Base
   end
 
   def author=(user)
-    self.write_attribute(:author_id, user.id)
-    self.participants.build(:user => user, :invited => true) if (self.new_record? && self.participants.empty? && user) # Don't add the author as participant if we already have some through nested attributes
+    super
+    # Don't add the author as participant if we already have some through nested attributes
+    self.participants.build(:user => user, :invited => true) if (self.new_record? && self.participants.empty? && user)
+  end
+
+   # Returns true if usr or current user is allowed to view the meeting
+  def visible?(user=nil)
+    (user || User.current).allowed_to?(:view_meetings, self.project)
+  end
+
+  def all_possible_participants
+    self.project.users.all(:include => { :memberships => [:roles, :project] } ).select{ |u| self.visible?(u) }
   end
 
   def copy(attrs)
-    copy = self.clone
+    copy = self.dup
+
     copy.author = attrs.delete(:author)
     copy.attributes = attrs
-    copy.send(:after_initialize)
-    copy_participant_user_ids = copy.participants.collect(&:user_id)
-    copy.participants << self.participants.invited.reject{|p| copy_participant_user_ids.include? p.user_id}.collect(&:clone).each{|p| p.attended=false} # Make sure the participants have no id
+    copy.send(:set_initial_values)
+
+    copy.participants.clear
+    copy.participants << self.participants.collect(&:clone).each{|p| p.id = nil; p.attended = false} # Make sure the participants have no id
+
     copy
+  end
+
+  def close_agenda_and_copy_to_minutes!
+    self.agenda.lock!
+    self.create_minutes(:text => agenda.text)
   end
 
   protected
 
-  def after_initialize
+  def set_initial_values
     # set defaults
     self.start_time ||= Date.tomorrow + 10.hours
     self.duration   ||= 1
@@ -104,7 +127,9 @@ class Meeting < ActiveRecord::Base
 
   private
 
-  def add_author_as_watcher
-    add_watcher(author)
+  def add_new_participants_as_watcher
+    self.participants.select(&:new_record?).each do |p|
+      add_watcher(p.user)
+    end
   end
 end
