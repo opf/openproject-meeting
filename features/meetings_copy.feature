@@ -1,6 +1,7 @@
 #-- copyright
-# OpenProject is a project management system.
-# Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+# OpenProject Meeting Plugin
+#
+# Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
@@ -53,7 +54,7 @@ Feature: Copy meetings
        When I am already logged in as "alice"
         And I go to the Meetings page for the project called "dingens"
         And I click on "Alices Meeting"
-       Then I should see "Copy" within "#content > .contextual"
+       Then I should see "Copy" within "#content > .action_menu_specific"
 
   Scenario: Navigate to a meeting copy page
       Given the role "user" may have the following rights:

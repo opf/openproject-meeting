@@ -1,6 +1,7 @@
 #-- copyright
-# OpenProject is a project management system.
-# Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+# OpenProject Meeting Plugin
+#
+# Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
@@ -20,6 +21,13 @@
 module OpenProject::Meeting
   class Hooks < Redmine::Hook::ViewListener
     render_on :activity_index_head,
-              :partial => 'hooks/meetings/activity_index_head'
+              partial: 'hooks/meetings/activity_index_head'
+
+    render_on :users_show_head,
+              partial: 'hooks/meetings/activity_index_head'
+
+    render_on :search_index_head,
+              partial: 'hooks/meetings/activity_index_head'
+
   end
 end

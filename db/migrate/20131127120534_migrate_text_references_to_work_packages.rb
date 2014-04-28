@@ -18,23 +18,28 @@
 # See doc/COPYRIGHT.md for more details.
 #++
 
-module PluginSpecHelper
-  shared_examples_for "customized journal class" do
-    describe :save do
-      let(:text) { "Lorem ipsum" }
-      let(:changed_data) { { :text => [nil, text] } }
+require Rails.root.join("db", "migrate", "migration_utils", "text_references").to_s
 
-      describe "WITHOUT compression" do
-        before do
-          #we have to save here because changed_data will update (and save) attributes and miss an ID
-          journal.save!
-          journal.changed_data = changed_data
+class MigrateTextReferencesToWorkPackages < ActiveRecord::Migration
+    include Migration::Utils
 
-          journal.reload
+    COLUMNS_PER_TABLE = {
+      'meeting_contents' => { columns: ['text'], update_journal: true },
+    }
+
+    def up
+      COLUMNS_PER_TABLE.each_pair do |table, options|
+        say_with_time_silently "Update text references for table #{table}" do
+          update_text_references(table, options[:columns], options[:update_journal])
         end
-
-        it { journal.changed_data[:text][1].should == text }
       end
     end
-  end
+
+    def down
+      COLUMNS_PER_TABLE.each_pair do |table, options|
+        say_with_time_silently "Restore text references for table #{table}" do
+          restore_text_references(table, options[:columns], options[:update_journal])
+        end
+      end
+    end
 end

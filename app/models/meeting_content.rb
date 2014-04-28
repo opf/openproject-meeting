@@ -1,6 +1,7 @@
 #-- copyright
-# OpenProject is a project management system.
-# Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+# OpenProject Meeting Plugin
+#
+# Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
@@ -30,19 +31,13 @@ class MeetingContent < ActiveRecord::Base
 
   before_save :comment_to_journal_notes
 
-  acts_as_journalized :activity_type => 'meetings',
-    :activity_permission => :view_meetings,
-    :activity_find_options => {:include => {:meeting => :project}},
-    :event_type => Proc.new {|o| "#{o.journal.journable.class.to_s.underscore.dasherize}"},
-    :event_title => Proc.new {|o| "#{o.journal.journable.class.model_name.human}: #{o.journal.journable.meeting.title}"},
-    :event_url => Proc.new {|o| {:controller => '/meetings', :action => 'show', :id => o.journal.journable.meeting}}
+  acts_as_journalized
+  acts_as_event type: Proc.new {|o| "#{o.class.to_s.underscore.dasherize}"},
+                title: Proc.new {|o| "#{o.class.model_name.human}: #{o.meeting.title}"},
+                url: Proc.new {|o| {:controller => '/meetings', :action => 'show', :id => o.meeting}}
 
   User.before_destroy do |user|
     MeetingContent.update_all ['author_id = ?', DeletedUser.first], ['author_id = ?', user.id]
-  end
-
-  def activity_type
-    'meetings'
   end
 
   def editable?

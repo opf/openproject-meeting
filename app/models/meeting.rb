@@ -1,6 +1,7 @@
 #-- copyright
-# OpenProject is a project management system.
-# Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+# OpenProject Meeting Plugin
+#
+# Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
@@ -41,12 +42,13 @@ class Meeting < ActiveRecord::Base
                      :include => [:contents, :project],
                      :date_column => "#{table_name}.created_at"
 
-  acts_as_journalized :activity_find_options => {:include => [:agenda, :author, :project]},
-                      :event_title => Proc.new {|o| "#{l :label_meeting}: #{o.journal.journable.title} \
-                      (#{format_date o.journal.journable.start_time} \
-                        #{format_time o.journal.journable.start_time, false}-#{format_time o.journal.journable.end_time, false})"},
-                      :event_url => Proc.new {|o| {:controller => '/meetings', :action => 'show', :id => o.journal.journable}},
-                      :event_author => Proc.new {|o| o.journal.user}
+  acts_as_journalized
+  acts_as_event title: Proc.new {|o| "#{l :label_meeting}: #{o.title} \
+                                      #{format_date o.start_time} \
+                                      #{format_time o.start_time, false}-#{format_time o.end_time, false})"},
+                url: Proc.new {|o| {:controller => '/meetings', :action => 'show', :id => o}},
+                author: Proc.new {|o| o.user},
+                description: ""
 
   register_on_journal_formatter(:plaintext, 'title')
   register_on_journal_formatter(:fraction, 'duration')
@@ -100,9 +102,14 @@ class Meeting < ActiveRecord::Base
   def visible?(user=nil)
     (user || User.current).allowed_to?(:view_meetings, self.project)
   end
-
-  def all_possible_participants
-    self.project.users.all(:include => { :memberships => [:roles, :project] } ).select{ |u| self.visible?(u) }
+  
+  def all_changeable_participants
+    changeable_participants = self.participants.select(&:invited).collect{|p| p.user}
+    changeable_participants = changeable_participants + self.participants.select(&:attended).collect{|p| p.user}
+    changeable_participants = changeable_participants 
+                              + self.project.users.all(:include => { :memberships => [:roles, :project] } ).select{|u| self.visible?(u) }
+    
+    changeable_participants.uniq{|user| user.id}
   end
 
   def copy(attrs)

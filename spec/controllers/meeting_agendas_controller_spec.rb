@@ -18,8 +18,24 @@
 # See doc/COPYRIGHT.md for more details.
 #++
 
-FactoryGirl.define do
-  factory :meeting_agenda do |a|
-    meeting
+require File.dirname(__FILE__) + '/../spec_helper'
+
+describe MeetingAgendasController do
+  let(:meeting) { FactoryGirl.create(:meeting) }
+  let(:user) { FactoryGirl.create(:admin) }
+
+  before { User.stub(:current).and_return(user) }
+
+  describe 'preview' do
+    let(:text) { "Meeting agenda content" }
+
+    it_behaves_like 'valid preview' do
+      let(:preview_texts) { [text] }
+      let(:preview_params) { { meeting_id: meeting.id, meeting_agenda: { text: text } } }
+    end
+
+    it_behaves_like 'authorizes object access' do
+      let(:preview_params) { { meeting_id: meeting.id, meeting_agenda: { } } }
+    end
   end
 end

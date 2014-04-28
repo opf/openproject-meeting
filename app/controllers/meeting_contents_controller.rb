@@ -1,6 +1,7 @@
 #-- copyright
-# OpenProject is a project management system.
-# Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+# OpenProject Meeting Plugin
+#
+# Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
@@ -20,6 +21,7 @@
 class MeetingContentsController < ApplicationController
 
   include PaginationHelper
+  include OpenProject::Concerns::Preview
 
   menu_item :meetings
 
@@ -88,15 +90,10 @@ class MeetingContentsController < ApplicationController
     redirect_back_or_default :controller => '/meetings', :action => 'show', :id => @meeting
   end
 
-  def preview
-    (render_403; return) unless @content.editable?
-    @text = params[:text]
-    render :partial => 'common/preview'
-  end
-
   def default_breadcrumb
     MeetingsController.new.send(:default_breadcrumb)
   end
+
   private
 
   def find_meeting
@@ -106,4 +103,13 @@ class MeetingContentsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render_404
   end
+
+  def parse_preview_data
+    text = { }
+
+    text = { WikiContent.human_attribute_name(:content) => params[@content_type][:text] } if @content.editable?
+
+    return text, [], @content
+  end
+
 end

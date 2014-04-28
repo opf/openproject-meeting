@@ -1,6 +1,7 @@
 <!---- copyright
-OpenProject is a project management system.
-Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+OpenProject Meeting Plugin
+
+Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License version 3.
@@ -20,6 +21,28 @@ See doc/COPYRIGHT.md for more details.
 
 # Changelog
 
+## 3.0.9
+
+* `#5357` Adapt released plugins to base on plugins functionality
+* `#4040` Fix: Referencing work packages with ### in news, forums and meetings does not work
+* Fix: Add edit accesskey for wiki
+
+## 3.0.8
+
+* `#4024` Subpages have no unique page titles
+* `#4797` Fix: [Subdirectory] Broken Links
+
+## 3.0.7
+
+* `#2259` [Accessibility] linearisation of issue show form (2)
+
+## 3.0.6
+
+* Adaptations for new icon font
+* `#2250` [Accessibility] activity icon labels
+* `#2759` Fix: [Performance] Activity View very slow
+* `#3119` [Migration] Meetings do not migrate planning element references
+* `#3329` Refactor Duplicated Code Journals
 * added icon for new project menu
 
 ## 3.0.5

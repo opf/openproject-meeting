@@ -1,6 +1,7 @@
 <%#-- copyright
-OpenProject is a project management system.
-Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+OpenProject Meeting Plugin
+
+Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License version 3.
@@ -33,7 +34,7 @@ See doc/COPYRIGHT.md for more details.
         <th><%=Meeting.human_attribute_name(:participants_attended) %></th>
       </tr></thead>
       <tbody>
-        <% @meeting.all_possible_participants.sort.each do |user| -%>
+        <% @meeting.all_changeable_participants.sort.each do |user| -%>
         <%= hidden_field_tag "meeting[participants_attributes][][user_id]", user.id %>
         <tr class="<%= cycle("odd", "even")%>">
           <td><%=h user %></td>

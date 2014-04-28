@@ -1,6 +1,7 @@
 #-- copyright
-# OpenProject is a project management system.
-# Copyright (C) 2011-2013 the OpenProject Foundation (OPF)
+# OpenProject Meeting Plugin
+#
+# Copyright (C) 2011-2014 the OpenProject Foundation (OPF)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
@@ -35,15 +36,25 @@ de:
   description_attended: "teilgenommen"
   description_invite: "eingeladen"
 
+  events:
+    meeting: Besprechung bearbeitet
+    meeting_agenda: Agenda bearbeitet
+    meeting_agenda_closed: Agenda abgeschlossen
+    meeting_agenda_opened: Agenda geöffnet
+    meeting_minutes: Protokoll bearbeitet
+    meeting_minutes_created: Protokoll erstellt
+
   label_meeting: "Besprechung"
   label_meeting_plural: "Besprechungen"
   label_meeting_new: "Neue Besprechung"
+  label_meeting_edit: "Besprechung bearbeiten"
   label_meeting_agenda: "Agenda"
   label_meeting_minutes: "Protokoll"
   label_meeting_close: "Schließen"
   label_meeting_open: "Öffnen"
   label_meeting_agenda_close: "Agenda schließen um mit dem Protokoll zu beginnen"
   label_meeting_date_time: "Datum/Uhrzeit"
+  label_meeting_diff: "Differenz"
   label_notify: "Zur Einsicht verschicken"
   label_version: "Version"
 
