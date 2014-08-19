@@ -69,6 +69,7 @@ describe MeetingMailer do
   def check_meeting_mail_content(body)
     body.should include(meeting.project.name)
     body.should include(meeting.title)
+    body.should include(meeting_path meeting)
     body.should include(i18n.format_date meeting.start_date)
     body.should include(i18n.format_time meeting.start_time, false)
     body.should include(i18n.format_time meeting.end_time, false)
