@@ -22,6 +22,9 @@ class MeetingMailer < UserMailer
 
   def content_for_review(content, content_type, address)
     @meeting = content.meeting
+    @content_type = content_type
+    @meeting_url = meeting_url @meeting
+    @project_url = project_url @meeting.project
     open_project_headers 'Project' => @meeting.project.identifier,
                          'Meeting-Id' => @meeting.id
 
