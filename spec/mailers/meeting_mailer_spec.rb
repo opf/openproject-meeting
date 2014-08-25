@@ -69,6 +69,7 @@ describe MeetingMailer, :type => :mailer do
   def check_meeting_mail_content(body)
     expect(body).to include(meeting.project.name)
     expect(body).to include(meeting.title)
+    expect(body).to include(meeting_path meeting)
     expect(body).to include(i18n.format_date meeting.start_date)
     expect(body).to include(i18n.format_time meeting.start_time, false)
     expect(body).to include(i18n.format_time meeting.end_time, false)
