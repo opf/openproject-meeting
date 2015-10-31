@@ -55,8 +55,8 @@ class MeetingContent < ActiveRecord::Base
   def at_version(version)
     journals
       .joins("JOIN meeting_contents ON meeting_contents.id = journals.journable_id AND meeting_contents.type='#{self.class}'")
-      .where(version: version)
-      .first.data
+      .find_by(version: version)
+      .data
   end
 
   # Compatibility for mailer.rb

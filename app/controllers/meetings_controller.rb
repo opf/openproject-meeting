@@ -19,11 +19,11 @@
 #++
 
 class MeetingsController < ApplicationController
-  around_filter :set_time_zone
-  before_filter :find_project, only: [:index, :new, :create]
-  before_filter :find_meeting, except: [:index, :new, :create]
-  before_filter :convert_params, only: [:create, :update]
-  before_filter :authorize
+  around_action :set_time_zone
+  before_action :find_project, only: [:index, :new, :create]
+  before_action :find_meeting, except: [:index, :new, :create]
+  before_action :convert_params, only: [:create, :update]
+  before_action :authorize
 
   helper :journals
   helper :watchers
@@ -143,7 +143,7 @@ class MeetingsController < ApplicationController
 
   def convert_params
     start_date = meeting_params.delete(:start_date)
-    start_time_hour = meeting_params.delete(:"start_time_hour")
+    start_time_hour = meeting_params.delete(:start_time_hour)
     begin
       timestring = "#{start_date} #{start_time_hour}"
       time = Time.zone.parse(timestring)
@@ -157,7 +157,7 @@ class MeetingsController < ApplicationController
     meeting_params[:participants_attributes].each { |p| p.reverse_merge! attended: false, invited: false }
   end
 
-private
+  private
   def meeting_params
     params.require(:meeting).permit(:title, :location, :start_time, :duration, :start_date, :start_time_hour,
       participants_attributes: [:email, :name, :invited, :attended, :user, :user_id, :meeting])

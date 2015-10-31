@@ -79,7 +79,7 @@ end
 
 Then /^there should be a text edit toolbar for the "(.+)" field$/ do |field_id|
   # second parent up
-  ancestor = find(:xpath, "//*[@id='#{field_id.gsub('#','')}']/../..")
+  ancestor = find(:xpath, "//*[@id='#{field_id.delete('#')}']/../..")
 
   expect(ancestor).to have_selector('.jstElements')
 end
