@@ -41,7 +41,7 @@ class MeetingParticipant < ActiveRecord::Base
     to_s.downcase <=> participant.to_s.downcase
   end
 
-  alias :to_s :name
+  alias_method :to_s, :name
 
   def copy_attributes
     # create a clean attribute set allowing to attach participants to different meetings

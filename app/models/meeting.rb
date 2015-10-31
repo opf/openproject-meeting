@@ -162,7 +162,7 @@ class Meeting < ActiveRecord::Base
     create_minutes(text: agenda.text, comment: 'Minutes created')
   end
 
-  alias :original_participants_attributes= :participants_attributes=
+  alias_method :original_participants_attributes=, :participants_attributes=
   def participants_attributes=(attrs)
     attrs.each do |participant|
       participant['_destroy'] = true if !(participant['attended'] || participant['invited'])
