@@ -4,6 +4,8 @@ module OpenProject
       module_function
 
       def load!
+        Setting.default_projects_modules += ['meetings']
+
         add_permissions! (member_role || raise('Member role not found')), member_permissions
         add_permissions! (reader_role || raise('Reader role not found')), reader_permissions
       end
