@@ -38,6 +38,7 @@ module OpenProject::Meeting
         permission :create_meeting_agendas, { meeting_agendas: [:update, :preview] }, require: :member
         permission :close_meeting_agendas, { meeting_agendas: [:close, :open] }, require: :member
         permission :send_meeting_agendas_notification, { meeting_agendas: [:notify] }, require: :member
+        permission :send_meeting_agendas_icalendar, { meeting_agendas: [:icalendar] }, require: :member
         permission :create_meeting_minutes, { meeting_minutes: [:update, :preview] }, require: :member
         permission :send_meeting_minutes_notification, { meeting_minutes: [:notify] }, require: :member
       end

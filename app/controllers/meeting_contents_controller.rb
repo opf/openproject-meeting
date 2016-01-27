@@ -104,6 +104,28 @@ class MeetingContentsController < ApplicationController
     end
     redirect_back_or_default controller: '/meetings', action: 'show', id: @meeting
   end
+  
+  def icalendar
+    unless @content.new_record?
+      author_mail = @content.meeting.author.mail
+
+      recipients_with_errors = []
+      @content.meeting.participants.each do |recipient|
+        begin
+          MeetingMailer.publish_icalendar(@content, @content_type, recipient.mail).deliver_now
+        rescue
+          recipients_with_errors << recipient
+        end
+      end
+      if recipients_with_errors == []
+        flash[:notice] = l(:notice_successful_notification)
+      else
+        flash[:error] = l(:error_notification_with_errors,
+                          recipients: recipients_with_errors.map(&:name).join('; '))
+      end
+    end
+    redirect_back_or_default controller: '/meetings', action: 'show', id: @meeting
+  end
 
   def default_breadcrumb
     MeetingsController.new.send(:default_breadcrumb)
