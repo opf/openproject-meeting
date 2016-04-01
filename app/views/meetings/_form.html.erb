@@ -24,7 +24,7 @@ See doc/COPYRIGHT.md for more details.
 <section class="form--section">
 
   <div class="form--field">
-    <%= f.text_field :title, :required => true, :size => 60, :class => "autofocus" %>
+    <%= f.text_field :title, :required => true, :size => 60 %>
   </div>
 
   <div class="form--field">
@@ -64,7 +64,7 @@ See doc/COPYRIGHT.md for more details.
   <div class="form--field">
     <label for="meeting-form-duration" class="form--label -required">
       <span aria-hidden="true"><%= Meeting.human_attribute_name(:duration) %></span>
-      <span class="hidden-for-sighted"><%= Meeting.human_attribute_name(:duration) %></span>
+      <span class="hidden-for-sighted" lang="en"><%= l(:text_in_hours)%>  <%=l(:text_hours_between, min: 1, max: 168) %></span>
     </label>
 
     <div class="form--field-container">
