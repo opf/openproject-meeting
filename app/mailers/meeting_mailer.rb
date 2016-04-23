@@ -18,6 +18,8 @@
 # See doc/COPYRIGHT.md for more details.
 #++
 
+require 'icalendar'
+
 class MeetingMailer < UserMailer
   def content_for_review(content, content_type, address)
     @meeting = content.meeting
@@ -30,7 +32,7 @@ class MeetingMailer < UserMailer
     mail to: address, subject: subject
   end
   
-  def publish_icalendar(content, content_type, address)
+  def icalendar_notification(content, content_type, address)
     @meeting = content.meeting
     @content_type = content_type
     
@@ -39,33 +41,20 @@ class MeetingMailer < UserMailer
     headers['Content-Type'] = 'text/calendar; charset=utf-8; method="PUBLISH"; name="meeting.ics"'
     headers['Content-Transfer-Encoding'] = '8bit'
     subject = "[#{@meeting.project.name}] #{I18n.t(:"label_#{content_type}")}: #{@meeting.title}"
-    mystartdate = @meeting.start_time.strftime("%Y%m%dT%H%M%SZ")
-    myenddate = @meeting.end_time.strftime("%Y%m%dT%H%M%SZ")
-    url = meeting_url(@meeting)
     now = DateTime.now.strftime("%Y%m%dT%H%M%SZ")
 
-    ical = "BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:OpenProject Meeting
-BEGIN:VEVENT
-SUMMARY:[#{@meeting.project.name}] #{@meeting.title}
-LOCATION:#{@meeting.location}
-DTSTAMP:#{now}
-DTSTART:#{mystartdate}
-DTEND:#{myenddate}
-DESCRIPTION:
-METHOD:PUBLISH
-ORGANIZER;CN=\"#{@meeting.author}\":MAILTO:#{@meeting.author.mail}
-UID:#{@meeting.id}@#{@meeting.project.identifier}
-SEQUENCE:0
-URL:#{url}
-END:VEVENT
-END:VCALENDAR"
-
-    mail(to: address, subject: subject) do |format|
-       format.ics {
-         render :text => ical, :layout => false
-      }
+    # Create a calendar with an event (standard method)
+    entry = ::Icalendar::Calendar.new
+    entry.event do |e|
+      e.dtstart     = @meeting.start_time
+      e.dtend       = @meeting.end_time
+      e.url         = meeting_url(@meeting)
+      e.summary     = "[#{@meeting.project.name}] #{@meeting.title}"
+      e.description = subject
+      e.uid         = "#{@meeting.id}@#{@meeting.project.identifier}"
     end
+
+    attachments['meeting.ics'] = entry.to_ical
+    mail(to: address, subject: subject)
   end
 end

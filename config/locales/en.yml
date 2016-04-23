@@ -84,3 +84,4 @@ en:
   text_meeting_minutes_for_meeting: 'minutes for the meeting "%{meeting}"'
   text_review_meeting_agenda: "%{author} has put the %{link} up for review."
   text_review_meeting_minutes: "%{author} has put the %{link} up for review."
+  text_notificiation_invited: "This mail contains an ics entry for the meeting below:"
