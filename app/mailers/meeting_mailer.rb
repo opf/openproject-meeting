@@ -42,6 +42,8 @@ class MeetingMailer < UserMailer
     headers['Content-Transfer-Encoding'] = '8bit'
     subject = "[#{@meeting.project.name}] #{I18n.t(:"label_#{content_type}")}: #{@meeting.title}"
     now = DateTime.now.strftime("%Y%m%dT%H%M%SZ")
+    author = Icalendar::Values::CalAddress.new("mailto:#{@meeting.author.mail}",
+                                               cn: @meeting.author.name)
 
     # Create a calendar with an event (standard method)
     entry = ::Icalendar::Calendar.new
@@ -52,6 +54,7 @@ class MeetingMailer < UserMailer
       e.summary     = "[#{@meeting.project.name}] #{@meeting.title}"
       e.description = subject
       e.uid         = "#{@meeting.id}@#{@meeting.project.identifier}"
+      e.organizer   = author
     end
 
     attachments['meeting.ics'] = entry.to_ical
