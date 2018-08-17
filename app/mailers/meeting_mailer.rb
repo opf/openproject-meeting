@@ -22,7 +22,7 @@ require 'icalendar'
 require 'icalendar/tzinfo'
 
 class MeetingMailer < UserMailer
-  def content_for_review(content, content_type, address)
+  def content_for_review!(content, content_type, address)
     @meeting = content.meeting
     @content_type = content_type
 
@@ -30,10 +30,10 @@ class MeetingMailer < UserMailer
                          'Meeting-Id' => @meeting.id
 
     subject = "[#{@meeting.project.name}] #{I18n.t(:"label_#{content_type}")}: #{@meeting.title}"
-    mail to: address, subject: subject
+    mail_now to: address, subject: subject, template_name: 'content_for_review'
   end
 
-  def icalendar_notification(content, content_type, address)
+  def icalendar_notification!(content, content_type, address)
     @meeting = content.meeting
     @content_type = content_type
 
@@ -66,6 +66,6 @@ class MeetingMailer < UserMailer
     end
 
     attachments['meeting.ics'] = entry.to_ical
-    mail(to: address, subject: subject)
+    mail_now(to: address, subject: subject, template_name: 'icalendar_notification')
   end
 end
